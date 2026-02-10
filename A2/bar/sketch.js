@@ -60,37 +60,28 @@ function draw() {
   for (let i = 0; i < topQuakes.length; i++) {
     let curr = topQuakes[i];
 
-    // MAPPING: Convert magnitude to Width (instead of Height)
-    // We map 0-10 magnitude to 0-graphWidth pixels
+    // map magnitude to bar length, 0 to 10 for full graph area
     let barLength = map(curr.magnitude, 0, 10, 0, graphWidth);
 
-    // Y Position: Moves down as 'i' increases
+    // x and y offset
     let y = topMargin + (i * rowHeight);
-    
-    // X Position: Always starts at the left margin
     let x = leftMargin; 
 
-    // DRAW BAR
-    // format: rect(x, y, width, height)
-    // We subtract 15 from rowHeight to create a gap between bars
+    // each bar, with 15 removed from height for padding
     rect(x, y, barLength, rowHeight - 15);
 
-    // DRAW LABELS
+    // labels 
     fill(0);
     noStroke();
-    
-    // Calculate the vertical center of the current bar for text alignment
     let centerY = y + (rowHeight - 15) / 2;
-
-    // 1. Location Label (Left of the bar)
+    // location
     textAlign(RIGHT);
     text(curr.location, x - 10, centerY);
-
-    // 2. Magnitude Label (Right of the bar)
+    // magnitude 
     textAlign(LEFT);
     text(curr.magnitude, x + barLength + 10, centerY);
 
-    // Reset styles for the next bar
+    // reset styles
     fill(70, 130, 180);
     stroke(0);
   }
