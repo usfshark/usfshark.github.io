@@ -46,6 +46,7 @@ function draw() {
   let axisIncr = graphWidth / 10;
   let currLine = 200;
   stroke(180);
+  fill(0);
   for (let i = 0; i < 11; i++) {
     line(currLine, height - bottomMargin, currLine, topMargin);
     textAlign(CENTER, TOP);
@@ -54,7 +55,7 @@ function draw() {
   }
 
 
-  fill(70, 130, 180);
+  fill(70, 130, 200);
   stroke(0);
 
   for (let i = 0; i < topQuakes.length; i++) {
@@ -82,7 +83,7 @@ function draw() {
     text(curr.magnitude, x + barLength + 10, centerY);
 
     // reset styles
-    fill(70, 130, 180);
+    fill(70, 130, 200);
     stroke(0);
   }
   
@@ -94,18 +95,17 @@ function draw() {
 
   // title and axis label
   textAlign(RIGHT, CENTER);
-  text("Greatest Magnitude Earthquakes", (width / 2) + (leftMargin - rightMargin), 20);
+  fill(0);
   noStroke();
+  text("Greatest Magnitude Earthquakes", (width / 2) + (leftMargin - rightMargin), 20);
   text("Magnitude", (width / 2)+ (leftMargin - rightMargin), height - 30);
-  strokeWeight(2);
 
   // annotation
-  fill(0);
   noStroke();
   text("<- Notice that all\nfive strongest\nrecorded fall\nbelow a mag\nof eight!", 730, 100);
 
   // final reset of styles
-  fill(70, 130, 180);
+  fill(70, 130, 200);
   strokeWeight(2);
   
 }
