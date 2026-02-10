@@ -95,8 +95,17 @@ function draw() {
   // title and axis label
   textAlign(RIGHT, CENTER);
   text("Greatest Magnitude Earthquakes", (width / 2) + (leftMargin - rightMargin), 20);
-  strokeWeight(0);
+  noStroke();
   text("Magnitude", (width / 2)+ (leftMargin - rightMargin), height - 30);
   strokeWeight(2);
 
+  // annotation
+  fill(0);
+  noStroke();
+  text("<- Notice that all\nfive strongest\nrecorded fall\nbelow a mag\nof eight!", 730, 100);
+
+  // final reset of styles
+  fill(70, 130, 180);
+  strokeWeight(2);
+  
 }
