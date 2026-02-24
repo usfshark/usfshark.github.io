@@ -7,7 +7,7 @@ function preload() {
 }
 
 function setup() {
-  let cnv = createCanvas(800, 400); // Shorter height since it's just one box
+  let cnv = createCanvas(800, 400);
   cnv.parent('chart-container'); 
 
   // load heights into array

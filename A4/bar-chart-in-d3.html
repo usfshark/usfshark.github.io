@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Pokémon Type Bar Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .bar {
+            fill: steelblue;
+        }
+
+        .axis-x path,
+        .axis-y path {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis-x .tick line,
+        .axis-y .tick line {
+            stroke: #858585;
+        }
+
+        .axis text {
+            font-size: 12px;
+        }
+        
+        .axis-label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart-container"></div>
+
+    <script>
+        /** Code written originally, using in-class example as reference
+         * one reference is cited where it appears */
+
+        // set up container with margins
+        const svgWidth = 800;
+        const svgHeight = 600; 
+        const margin = { 
+            top: 40, 
+            right: 40, 
+            bottom: 50, 
+            left: 90 
+        };
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+
+        const svg = d3.select("#chart-container")
+            .append("svg")
+            .attr("width", svgWidth)
+            .attr("height", svgHeight)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // read data
+        d3.csv("pokemon.csv").then(function(data) {
+            
+            // roll up data to get count for each type
+            /** This code was written referencing a StackOverflow post on rollup() 
+             * to learn how it works; stackoverflow.com/questions/66840038. */
+            const typeCounts = d3.rollup(data, v => v.length, d => d.type_1);
+            let plotData = Array.from(typeCounts, ([label, value]) => ({label, value}));
+            // end citation
+            
+            // sort in descending order
+            plotData.sort((a, b) => b.value - a.value);
+
+            // define x-axis (count)
+            const x = d3.scaleLinear()
+                .domain([0, d3.max(plotData, d => d.value)])
+                .nice() 
+                .range([0, width]);
+
+            // define y-axis (type)
+            const y = d3.scaleBand()
+                .domain(plotData.map(d => d.label))
+                .range([0, height])
+                .padding(0.15); 
+
+            // add x-axis
+            svg.append("g")
+                .attr("class", "axis axis-x")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x).ticks(10));
+
+            // add y-axis
+            svg.append("g")
+                .attr("class", "axis axis-y")
+                .call(d3.axisLeft(y));
+
+            // add bars
+            svg.selectAll(".bar")
+                .data(plotData)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", 0) // Bars start at the very left (0 on the x-axis)
+                .attr("y", d => y(d.label)) // Vertical position depends on category
+                .attr("width", d => x(d.value)) // Width depends on the count
+                .attr("height", y.bandwidth()); // Height is the thickness of the band
+                
+            // x-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 10)
+                .text("Number of Pokémon");
+
+            // y-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -height / 2)
+                .text("Primary Type");
+                
+            // title
+            svg.append("text")
+                .attr("class", "title")
+                .attr("text-anchor", "middle")
+                .attr("x", width / 2) // Center the title horizontally
+                .attr("y", -margin.top / 2) // Position it in the top margin area
+                .text("Number of Pokemon By Type");
+        });
+    </script>
+</body>
+</html>
