@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Pokémon Bubble Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .axis-x path,
+        .axis-y path {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis-x .tick line,
+        .axis-y .tick line {
+            stroke: #858585;
+            opacity: 0.6; 
+        }
+
+        .axis text {
+            font-size: 12px;
+        }
+        
+        .axis-label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .bubble {
+            stroke: #282828;
+            stroke-width: 0.5px;
+            opacity: 0.6; /* i lowered the opacity to make the overlap */
+        }
+        
+
+    </style>
+</head>
+<body>
+    <div id="chart-container"></div>
+
+    <script>
+        /** Code written originally, using in-class example and past assignment as guidance;
+         * one reference is cited where it appears */
+
+        // set up container with margins
+        const svgWidth = 800;
+        const svgHeight = 600; 
+        const margin = { top: 60, right: 40, bottom: 60, left: 60 };
+        
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+
+        const svg = d3.select("#chart-container")
+            .append("svg")
+            .attr("width", svgWidth)
+            .attr("height", svgHeight)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // read data
+        d3.csv("pokemon.csv").then(data => {
+            
+            data.forEach(d => {
+                d.weight = +d.weight;
+                d.height = +d.height;
+                d.attack = +d.attack;
+                // keep generation id for color map
+            });
+
+            // scale x for weight
+            const x = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.weight)])
+                .nice()
+                .range([0, width]);
+
+            // scale y for height
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.height)])
+                .nice()
+                .range([height, 0]);
+
+            // scale size using sqrt (since we're working with area)
+            const size = d3.scaleSqrt()
+                .domain([0, d3.max(data, d => d.attack)])
+                .range([2, 25]); 
+
+            // color scale using scaleordinal and a premade d3 color set
+            /** This code was written using examples from observable on scaleOrdinal,
+             * found here: https://observablehq.com/@d3/d3-scaleordinal */
+            const color = d3.scaleOrdinal(d3.schemeCategory10)
+                .domain([...new Set(data.map(d => d.generation_id))].sort((a, b) => a - b));
+
+            // add x-axis
+            svg.append("g")
+                .attr("class", "axis axis-x")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x));
+
+            // add y-axis
+            svg.append("g")
+                .attr("class", "axis axis-y")
+                .call(d3.axisLeft(y));
+
+            // add bubbles
+            svg.selectAll(".bubble")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "bubble")
+                .attr("cx", d => x(d.weight))
+                .attr("cy", d => y(d.height))
+                .attr("r", d => size(d.attack))
+                .style("fill", d => color(d.generation_id))
+
+            // x-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 15)
+                .text("Weight");
+
+            // y-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -height / 2)
+                .text("Height");
+                
+            // title
+            svg.append("text")
+                .attr("class", "title")
+                .attr("text-anchor", "middle")
+                .attr("x", width / 2)
+                .attr("y", -margin.top / 2)
+                .text("Pokémon Weight vs. Height with Attack as Size, by Generation");
+        });
+    </script>
+</body>
+</html>
