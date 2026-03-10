@@ -1,0 +1,7 @@
+id,pokemon,species_id,height,weight,base_experience,type_1,type_2,hp,attack,defense,special_attack,special_defense,speed,color_1,color_2,color_f,egg_group_1,egg_group_2,url_icon,generation_id,url_image
+11,Metapod,11,0.7,9.9,72,bug,NA,50,20,55,25,25,30,#A8B820,NA,NA,bug,NA,//archives.bulbagarden.net/media/upload/f/ff/011MS6.png,1,https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/011.png
+92,Gastly,92,1.3,0.1,62,ghost,poison,30,35,30,100,35,80,#705898,#A040A0,#7B5299,indeterminate,NA,//archives.bulbagarden.net/media/upload/e/e1/092MS6.png,1,https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/092.png
+4,Charmander,4,0.6,8.5,62,fire,NA,39,52,43,60,50,65,#F08030,NA,NA,monster,dragon,//archives.bulbagarden.net/media/upload/7/7d/004MS6.png,1,https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/004.png
+25,Pikachu,25,0.4,6,112,electric,NA,35,55,40,50,50,90,#F8D030,NA,NA,ground,fairy,//archives.bulbagarden.net/media/upload/d/de/025MS6.png,1,https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/025.png
+150,Mewtwo,150,2,122,306,psychic,NA,106,110,90,154,90,130,#F85888,NA,NA,no-eggs,NA,//archives.bulbagarden.net/media/upload/0/00/150MS6.png,1,https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/150.png
+68,Machamp,68,1.6,130,227,fighting,NA,90,130,80,65,85,55,#C03028,NA,NA,humanshape,NA,//archives.bulbagarden.net/media/upload/0/05/068MS6.png,1,https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/068.png

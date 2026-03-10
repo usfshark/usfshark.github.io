@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Pokemon Attack Bar Chart</title>
+    
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .axis-x path,
+        .axis-y path {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis-x .tick line,
+        .axis-y .tick line {
+            stroke: #858585;
+        }
+
+        .axis text {
+            font-size: 12px;
+        }
+        
+        .axis-label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .legendTitle {
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart-container"></div>
+
+    <script>
+        /** Code written originally, using previous own assignments as reference;
+         * D3 legend documentation used for new concepts */
+        
+        // set up container with margins
+        const svgWidth = 900;
+        const svgHeight = 600; 
+        const margin = { 
+            top: 40, 
+            right: 150, 
+            bottom: 50, 
+            left: 100 
+        };
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+
+        const svg = d3.select("#chart-container")
+            .append("svg")
+            .attr("width", svgWidth)
+            .attr("height", svgHeight)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // read data (csv of 6 pokemon and their atk values)
+        d3.csv("pokemon.csv").then(function(data) {
+            
+            // get atk values into data
+            data.forEach(d => {
+                d.attack = +d.attack;
+            });
+            
+            // define x-axis (attack)
+            const maxAttack = d3.max(data, d => d.attack);
+            const x = d3.scaleLinear()
+                .domain([0, maxAttack])
+                .nice() 
+                .range([0, width]);
+
+            // define y-axis (name)
+            const y = d3.scaleBand()
+                .domain(data.map(d => d.pokemon))
+                .range([0, height])
+                .padding(0.15); 
+
+            // i use the YlOrRd sequential color scheme 
+            const colorScale = d3.scaleSequential(d3.interpolateYlOrRd)
+                .domain([0, 150]);
+
+            // add x-axis
+            svg.append("g")
+                .attr("class", "axis axis-x")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x));
+
+            // add y-axis and capitalize pokemon names
+            svg.append("g")
+                .attr("class", "axis axis-y")
+                .call(d3.axisLeft(y));
+
+            // add bars
+            svg.selectAll(".bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", 0) 
+                .attr("y", d => y(d.pokemon)) 
+                .attr("width", d => x(d.attack)) 
+                .attr("height", y.bandwidth())
+                .style("fill", d => colorScale(d.attack)); 
+                
+            // x-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom - 10)
+                .text("Attack Value");
+
+            // y-axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -height / 2)
+                .text("Pokemon");
+                
+            // title
+            svg.append("text")
+                .attr("class", "title")
+                .attr("text-anchor", "middle")
+                .attr("x", width / 2)
+                .attr("y", -margin.top / 2) 
+                .text("Gen 1 Pokemon and their Attack");
+
+            // set up legend
+            svg.append("g")
+                .attr("class", "legendSequential")
+                .attr("transform", `translate(${width + 20}, 20)`);
+
+            // define legend using 5 increments
+            const legendSequential = d3.legendColor()
+                .shapeWidth(25)
+                .cells([0, 30, 60, 90, 120, 150])
+                .orient("vertical")
+                .scale(colorScale)
+                .title("Attack Value")
+                .labelFormat(d3.format(".0f"));
+
+            // render legend
+            svg.select(".legendSequential")
+                .call(legendSequential);
+        });
+    </script>
+</body>
+</html>
